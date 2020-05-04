@@ -10,9 +10,32 @@ public:
 	int ID;
 	float beginningBalance{ 0.0f };
 
+	float pay_out();
+	float pay_in();
 private:
+	int PIN;
 	float currentBalance{ 0.0f };
+
+
 };
+
+class Database
+{
+public:
+	void database()					// type for database?
+	{
+
+	}
+
+	void append(Account const& a)
+	{
+		Account.append(a);
+	}
+
+private:
+	vector<Account> accounts;
+};
+
 
 Account addAccount(int& lastID);
 //float getBalance(const Account& account);
@@ -42,7 +65,7 @@ int main()
 			cout << "Please enter your ID: ";
 			cin >> userID;
 			int findAccount(int ID, const vector<Account> & accounts);
-			if (findAccount(userID, accounts) != -1) //infinite loop help?
+			if (findAccount(userID, accounts) != -1)						//infinite loop help?
 			{
 				//logged in menu maybe?
 			}
@@ -86,3 +109,12 @@ int findAccount(int ID, const vector<Account>& accounts)
 	return -1;					// returns if account is not found.
 }
 
+float pay_out()
+{
+	return 0.0;
+}
+
+float pay_in()
+{
+	return 0.0;
+}
