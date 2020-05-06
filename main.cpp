@@ -4,117 +4,174 @@
 
 using namespace std;
 
-class Account 
+const int Null_ID = -1;
+
+class Account
 {
 public:
-	int ID;
-	float beginningBalance{ 0.0f };
+	int id;
+	int balance;
+	int pin;
 
-	float pay_out();
-	float pay_in();
-private:
-	int PIN;
-	float currentBalance{ 0.0f };
-
-
+	//float pay_in();
+	//float pay_out();
 };
+
 
 class Database
 {
 public:
-	void database()					// type for database?
-	{
+	Database() {}				//default constructor
 
+	static int s_idGenerator;
+	int m_id;
+	Database() { m_id = s_idGenerator++; }
+	
+	Account look_up(int id)
+	{
+		for (int i = 0; i < accounts.size(); i++)
+		{
+			if (accounts[i].id == id)
+			{
+				return accounts[i];
+			}
+			Account nullAcct;
+			nullAcct.id = Null_ID;
+			return nullAcct;		
+		}
 	}
 
-	void append(Account const& a)
+	void addAccount(Account a)
 	{
-		Account.append(a);
+		accounts.push_back(a);
+		// m_id 
 	}
+	
+	int getID() const { return m_id; }
 
+	int getNumAccounts()
+	{
+		return accounts.size();
+	}
+	
 private:
 	vector<Account> accounts;
 };
 
+Database d;
 
-Account addAccount(int& lastID);
-//float getBalance(const Account& account);
-int findAccount(int ID, const vector<Account>& accounts);
+class Interaction
+{
+public:
+	void registerAccount(int newPin)
+	{
+		Account newAccount;
+		newAccount.id = d.getNumAccounts() + 1;
+		newAccount.pin = newPin;
+		newAccount.balance = 0;
 
+		d.addAccount(newAccount);
+	}
+
+	bool authenticate(int id, int pin)
+	{
+		Account lookedUp = d.look_up(id);
+
+		if (lookedUp.id == Null_ID)
+		{
+			return false;
+		}
+		
+		if (lookedUp.pin == pin)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	Account login(int id, int pin)
+	{
+		if (authenticate(id, pin))
+		{
+			return d.look_up(id);
+		}
+		else
+		{
+			Account nullAcct;
+			nullAcct.id = Null_ID;
+			return nullAcct;
+		}
+	}
+};
 
 
 int main()
 {
-	int choice;
-	vector<Account> accounts;
-	int lastID{ 0 };
+	Account a1;
+	a1.id = d.getID();
+	Account a2;
+	a2.id = d.getID();
+	Account a3;
+	a3.id = d.getID();
+
+	Database d;
+	d.addAccount(a1);
+	d.addAccount(a2);
+	d.addAccount(a3);
+
+	int userChoice = { 0 };
 	int userID;
+	int userPIN;
+	cout << "Welcome to the ATM. Please select a number choice below:" << endl;
+	cout << "\t 1. Login" << endl;
+	cout << "\t 2. Create New Account" << endl;
+	cout << "\t 3. Exit" << endl;
+	cin >> userChoice;
 
-	cout << "Welcome to the ATM. Please select an option." << endl;
-	cout << "1. Login to an existing account" << endl;
-	cout << "2. Create new account" << endl;
-	cout << "3. Exit the ATM" << endl;
-	cout << "Enter selection: ";
-	cin >> choice;
-
-	while (choice != '3')
+	switch (userChoice)
 	{
-		switch (choice)
+	case '1':
+		cout << "Please enter your id: ";
+		cin >> userID;
+		
+		Account user = d.look_up(userID);
+		if (user.id == Null_ID)
 		{
-		case 1:
-			cout << "Please enter your ID: ";
-			cin >> userID;
-			int findAccount(int ID, const vector<Account> & accounts);
-			if (findAccount(userID, accounts) != -1)						//infinite loop help?
+			cout << "Not Found" << endl;
+		}
+		else
+		{
+			cout << "Found" << endl;
+			cout << "Please enter your PIN: ";
+			cin >> userPIN;
+			if (user.pin == userPIN)
 			{
-				//logged in menu maybe?
+				cout << "Thank you." << endl;
 			}
 			else
-			{
-				cout << "Sorry, that is not a valid ID" << endl;
-			}
-			break;
-		case 2:
-			addAccount(lastID);
-			break;
-		case 3:
-			break;
-		default:
-			cout << endl << "Please choose a valid option." << endl;
+				cout << "PIN Incorrect" << endl;
 		}
+		break;
+	case '2':
+		cout << "Your new account number is: ";
+		cout << d.getID()
+
+	default:
+		break;
 	}
+
+	
+	
+	
+
+
+
+
+
+
 	return 0;
 }
-
-Account addAccount(int& lastID)
-{
-	Account newAccount;
-	lastID++;
-	newAccount.ID = lastID;
-	cout << "Your account ID is: " << lastID << endl;
-	cout << "What is your beginning balance?" << endl;
-	cin >> newAccount.beginningBalance;
-	return newAccount;
-}
-
-int findAccount(int ID, const vector<Account>& accounts)
-{
-	for (int i = 0; i < accounts.size(); i++)
-	{
-		if (accounts[i].ID == ID)
-		{
-			return i;
-		}
-	}
-	return -1;					// returns if account is not found.
-}
-
-float pay_out()
-{
-	return 0.0;
-}
-
-float pay_in()
-{
-	return 0.0;
-}
+	
